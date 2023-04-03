@@ -10,7 +10,7 @@ class Field:
         self.size = cell_count
         size = self.size
         cell_bounds = Vector2(WIN_WIDTH/size.x, WIN_HEIGHT/size.y)
-        self.indent = Vector2(cell_bounds.x/16, cell_bounds.y/9)
+        self.indent = Vector2(0, 0)
         self.cell_size = Vector2((WIN_WIDTH)/size.x - self.indent.x, (WIN_HEIGHT )/size.y - self.indent.y)
         self.cells = [[Cell(self, (j, i)) for j in range(int(size.x))] for i in range(int(size.y))]
         y = 0

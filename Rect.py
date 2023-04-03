@@ -26,6 +26,6 @@ class Rect(AbstractButton):
     def isIntersected(self, point: Vector2) -> bool:
         p = Vector2(point)
         thickness = self.outline_thickness
-        return (self.position.x <= p.x <= self.position.x + self.size.x and
-                self.position.y <= p.y <= self.position.y + self.size.y)
+        return (self.position.x < p.x < self.position.x + self.size.x and
+                self.position.y < p.y < self.position.y + self.size.y)
 

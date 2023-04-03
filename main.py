@@ -73,7 +73,7 @@ def main():
     cell_outline_button.position = Vector2(is_display_nc_button.position.x,
                                            display_cell_outline.position.y + display_cell_outline.getSize().y)
     cell_outline_button.color = pg.Color(GREEN)
-
+    last_clicked_cell = None
     def onMenuButtonPress():
         pass
 
@@ -183,10 +183,16 @@ def main():
             onNextButtonPress()
 
         for line_of_cells in field.cells:
-            for cell in line_of_cells:
-                if cell.rect.isKeydown(mouse_event, mouse_position):
-                    onCellPress(cell)
-
+            if mouse_event.isKeyHold():
+                for cell in line_of_cells:
+                    if cell.rect.isIntersected(mouse_position) and cell != last_clicked_cell:
+                        last_clicked_cell = cell
+                        onCellPress(cell)
+            else:
+                last_clicked_cell = None
+        if last_clicked_cell is not None:
+            if not last_clicked_cell.rect.isIntersected(mouse_position):
+                last_clicked_cell = None
         field.draw(screen)
         pg.display.flip()
 

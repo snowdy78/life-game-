@@ -21,7 +21,7 @@ class MouseButtonEvent:
         return self.before and not self.current
 
     def isKeyHold(self):
-        return self.before and self.current
+        return self.current
 
 
 class AbstractButton(ABC):
@@ -36,5 +36,5 @@ class AbstractButton(ABC):
         return self.isIntersected(p) and button_event.isKeydown()
 
     def isKeyHold(self, button_event, p:Vector2) -> bool:
-        return self.isIntersected(p) and button_event.isKeydown()
+        return self.isIntersected(p) and button_event.isKeyHold()
 
