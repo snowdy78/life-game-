@@ -11,6 +11,7 @@ class Field:
         size = self.size
         cell_bounds = Vector2(WIN_WIDTH/size.x, WIN_HEIGHT/size.y)
         self.indent = Vector2(0, 0)
+        self.rules = [[3], [2, 3]]
         self.cell_size = Vector2((WIN_WIDTH)/size.x - self.indent.x, (WIN_HEIGHT )/size.y - self.indent.y)
         self.cells = [[Cell(self, (j, i)) for j in range(int(size.x))] for i in range(int(size.y))]
         y = 0
@@ -44,33 +45,29 @@ class Field:
                 nc = cell.get_neighbour_count()
                 cell.text.setText(str(nc))
 
-    next_frame_live_cells = list()
-    next_frame_dead_cells = list()
+    def setRules(self, when_alive: list, when_still_live: list) -> None:
+        self.rules = [list(when_alive), list(when_still_live)]
 
     def nextStep(self):
-        nflc = self.next_frame_live_cells
-        nfdc = self.next_frame_dead_cells
-        for i in range(len(nflc)):
-            nflc[i].alive()
-        for i in range(len(nfdc)):
-            nfdc[i].kill()
-        nfdc.clear()
-        nflc.clear()
+        nflc = []
+        nfdc = []
         for y in range(len(self.cells)):
             for x in range(len(self.cells[y])):
                 cell = self.cells[y][x]
                 nc = cell.get_neighbour_count()
-                if nc == 3 and not cell.isLiving():
+                if nc in self.rules[0] and not cell.isLiving():
                     nflc.append(cell)
-                if not (nc == 2 or nc == 3) and cell.isLiving():
+                if not (nc in self.rules[1]) and cell.isLiving():
                     nfdc.append(cell)
+        for i in range(len(nflc)):
+            nflc[i].alive()
+        for i in range(len(nfdc)):
+            nfdc[i].kill()
 
     def kill_population(self):
         for y in self.cells:
             for cell in y:
                 cell.kill()
-        self.next_frame_live_cells.clear()
-        self.next_frame_dead_cells.clear()
 
     def getSize(self):
         return Vector2((WIN_WIDTH - self.position.x), (WIN_HEIGHT - self.position.y))
