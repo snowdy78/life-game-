@@ -1,5 +1,4 @@
 from Rect import *
-from settings import *
 from Text import *
 
 

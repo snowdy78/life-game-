@@ -1,4 +1,3 @@
-import pygame as pg
 from RectWithText import *
 
 
@@ -17,17 +16,15 @@ class CounterButton:
         if align is self.Vertical:
             self.add_button = RectWithText(Vector2(size.x, size.y/3), "+")
             self.sub_button = RectWithText(Vector2(size.x, size.y/3), "-")
-            self.sub_button.setPosition(Vector2(0, 2*size.y/3))
             self.show_button = RectWithText(Vector2(size.x, size.y / 3), str(show_number))
-            self.show_button.setPosition(Vector2(0, size.y/3))
+
         elif align is self.Horizontal:
             self.add_button = RectWithText(Vector2(size.x/3, size.y), "+")
             self.sub_button = RectWithText(Vector2(size.x/3, size.y), "-")
-            self.sub_button.setPosition(Vector2(2*size.x/3, 0))
             self.show_button = RectWithText(Vector2(size.x/3, size.y), str(show_number))
-            self.show_button.setPosition(Vector2(size.x/3, 0))
         else:
             assert False, "[ERROR] Invalid align type"
+        self.setPosition(Vector2(0, 0))
         self.increment = 1
         self.maximum = None
         self.minimum = None

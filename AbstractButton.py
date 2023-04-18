@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from pygame import Vector2
 import pygame as pg
+from settings import *
 
 
 class MouseButtonEvent:

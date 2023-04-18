@@ -1,5 +1,3 @@
-import pygame as pg
-from pygame import Vector2
 from AbstractButton import *
 
 

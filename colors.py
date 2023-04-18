@@ -1,4 +1,7 @@
 import pygame as pg
+from pygame import Vector2
+from pygame.color import Color
+from math import floor
 
 BLACK = pg.Color(0, 0, 0)
 WHITE = pg.Color(255, 255, 255)

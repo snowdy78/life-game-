@@ -1,6 +1,4 @@
-import pygame as pg
 from RectWithText import *
-from colors import *
 
 
 class SwitcherButton(RectWithText):

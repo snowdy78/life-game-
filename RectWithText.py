@@ -1,7 +1,5 @@
 from Rect import *
 from Text import *
-from AbstractButton import *
-from Rect import *
 
 
 class RectWithText(Rect):

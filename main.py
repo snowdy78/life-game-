@@ -1,16 +1,6 @@
-import pygame as pg
-import json
-import os
-from settings import *
-from Rect import *
 from Field import *
-from Cell import *
-from Text import *
-from tkinter import *
-from RectWithText import *
 from Stopwatch import *
 from CounterButton import *
-from colors import *
 from SwitcherButton import *
 
 pg.init()

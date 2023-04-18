@@ -1,7 +1,4 @@
-import pygame as pg
-from pygame import Vector2
-from pygame.color import Color
-from math import floor
+from colors import *
 
 
 class Text:
