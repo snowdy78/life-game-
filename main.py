@@ -112,59 +112,69 @@ def main():
     field.setPosition(field_position)
 
     left_panel = Rect(Vector2(field_position.x - field.cell_size.x / 16, WIN_HEIGHT))
-    left_panel.color = BLACK
+    left_panel.color = BLUE
 
     top_panel = Rect(Vector2(WIN_WIDTH, field_position.y - field.cell_size.y / 9))
-    top_panel.color = BLACK
-
-    top_panel_button_size = Vector2(WIN_WIDTH / 6, field_position.y - 3 * field.cell_size.y / 9)
-
+    top_panel.color = BLUE
+    indent_between_buttons = Vector2(field.cell_size.x/16, field.cell_size.y / 9)
+    top_panel_button_size = Vector2(WIN_WIDTH / 6, field_position.y - field.cell_size.y / 3)
+    left_panel_button_size = Vector2(field.position.x - field.cell_size.x/4, top_panel_button_size.y)
     next_step_button = RectWithText(top_panel_button_size, "Next")
-    next_step_button.setPosition(Vector2(field_position.x - field.cell_size.x / 16, field.cell_size.y / 9))
+    next_step_button.setPosition(Vector2(field_position.x - indent_between_buttons.x, field.cell_size.y / 9))
 
-    auto_button = RectWithText(Vector2(top_panel_button_size), "Auto")
+    auto_button = SwitcherButton(Vector2(top_panel_button_size), "Auto")
     auto_button.setPosition(Vector2(next_step_button.position.x +
-                                    next_step_button.size.x + field.cell_size.x / 16,
+                                    next_step_button.size.x + indent_between_buttons.x,
                                     next_step_button.position.y))
-    auto_button.setColor(pg.Color(RED))
-    auto_button_is_active = False
 
-    menu_button = RectWithText(Vector2(field_position.x - 3 * field.cell_size.x / 16, top_panel_button_size.y), "Menu")
-    menu_button.setPosition(Vector2(field.cell_size.x / 16, next_step_button.position.y))
+    menu_button = RectWithText(Vector2(field_position.x - 3 * indent_between_buttons.x, top_panel_button_size.y), "Menu")
+    menu_button.setPosition(Vector2(indent_between_buttons.x, next_step_button.position.y))
 
-    display_neighbour_count = Text("Display neighbour count:", 18)
+    display_neighbour_count = SwitcherButton(left_panel_button_size, "Display neighbour count:")
+    display_neighbour_count.text.setCharSize(24)
+    display_neighbour_count.active_color = RED
+    display_neighbour_count.default_color = left_panel.color
+    display_neighbour_count.outline_thickness = 1
+    display_neighbour_count.updateColor()
+
     display_neighbour_count.setPosition(Vector2(menu_button.position.x, field_position.y - field.cell_size.y / 9))
-
-    is_display_nc_button = Rect(Vector2(WIN_WIDTH/32, WIN_HEIGHT/20))
-    is_display_nc_button.position = Vector2(menu_button.position.x +
-                                            (menu_button.size.x - is_display_nc_button.size.x) / 2,
-                                            menu_button.position.y + display_neighbour_count.position.y +
-                                            display_neighbour_count.getSize().y)
-    is_display_nc_button.color = pg.Color(GREEN)
 
     clear_button = RectWithText(Vector2(top_panel_button_size), "Clear")
     clear_button.setPosition(Vector2(auto_button.position.x +
-                                     auto_button.size.x + field.cell_size.x / 16,
+                                     auto_button.size.x + indent_between_buttons.x,
                                      auto_button.position.y))
-    display_cell_outline = Text("Display cell outline:", 18)
+
+    display_cell_outline = SwitcherButton(left_panel_button_size, "Display cell outline:")
+    display_cell_outline.text.setCharSize(24)
+    display_cell_outline.active_color = RED
+    display_cell_outline.default_color = left_panel.color
+    display_cell_outline.outline_thickness = 1
+    display_cell_outline.updateColor()
+
     display_cell_outline.setPosition(Vector2(menu_button.position.x,
-                                             is_display_nc_button.position.y +
-                                             is_display_nc_button.size.y + field.cell_size.y / 9))
-    cell_outline_button = Rect(Vector2(WIN_WIDTH/32, WIN_HEIGHT/20))
-    cell_outline_button.position = Vector2(is_display_nc_button.position.x,
-                                           display_cell_outline.position.y + display_cell_outline.getSize().y)
-    cell_outline_button.color = pg.Color(GREEN)
-    last_clicked_cell = None
+                                             display_neighbour_count.position.y +
+                                             display_neighbour_count.size.y + indent_between_buttons.y))
+
+    counter_size = Vector2(top_panel_button_size.x / 5, top_panel_button_size.y)
+    speed_counter = CounterButton(counter_size, 2, CounterButton.Vertical)
+    speed_counter.add_button.outline_thickness = 1
+    speed_counter.sub_button.outline_thickness = 1
+    speed_counter.show_button.outline_thickness = 1
+    speed_counter.setMaximum(20)
+    speed_counter.setMinimum(1)
+    cb_pos = clear_button.position
+    cb_size = clear_button.size
+    speed_counter.setPosition(Vector2(cb_pos.x + cb_size.x + WIN_WIDTH / 12, cb_pos.y))
+    field.setRules(json_settings["When-cells-will-alive"], json_settings["When-cells-still-live"])
+
 
     def setAutoButtonActiveStatus(status: bool):
-        nonlocal auto_button, auto_button_is_active, next_step_button
-        auto_button_is_active = status
-        if auto_button_is_active:
-            auto_button.setColor(pg.Color(GREEN))
+        nonlocal auto_button, next_step_button
+        auto_button.setActive(status)
+        if auto_button.isActive():
             next_step_button.setColor(pg.Color(LIGHT_GRAY))
             next_step_button.setTextColor(pg.Color(DARK_GRAY))
         else:
-            auto_button.setColor(pg.Color(RED))
             next_step_button.setColor(pg.Color(WHITE))
             next_step_button.setTextColor(pg.Color(BLACK))
 
@@ -173,18 +183,18 @@ def main():
         field.nextStep()
 
     def onAutoButtonPress():
-        nonlocal auto_button_is_active
-        setAutoButtonActiveStatus(not auto_button_is_active)
+        nonlocal auto_button
+        setAutoButtonActiveStatus(not auto_button.isActive())
 
     def onDiplayNCButtonPress():
-        nonlocal field, is_display_nc_button
-        if is_display_nc_button.color == pg.Color(RED):
-            is_display_nc_button.color = pg.Color(GREEN)
+        nonlocal field, display_neighbour_count
+        if display_neighbour_count.color == RED:
+            display_neighbour_count.setColor(left_panel.color)
             for i in field.cells:
                 for cell in i:
                     cell.drawText(True)
         else:
-            is_display_nc_button.color = pg.Color(RED)
+            display_neighbour_count.setColor(RED)
             for i in field.cells:
                 for cell in i:
                     cell.drawText(False)
@@ -201,14 +211,14 @@ def main():
             cell.alive()
 
     def onDisplayCellOutlineButtonPress():
-        nonlocal cell_outline_button, field
-        if cell_outline_button.color == pg.Color(GREEN):
-            cell_outline_button.color = pg.Color(RED)
+        nonlocal field
+        if display_cell_outline.color == pg.Color(left_panel.color):
+            display_cell_outline.setColor(RED)
             for i in field.cells:
                 for cell in i:
                     cell.rect.outline_thickness = 0
         else:
-            cell_outline_button.color = pg.Color(GREEN)
+            display_cell_outline.setColor(left_panel.color)
             for i in field.cells:
                 for cell in i:
                     cell.rect.outline_thickness = 1
@@ -216,17 +226,8 @@ def main():
     background = Rect(Vector2(WIN_WIDTH, WIN_HEIGHT))
     mouse_event = MouseButtonEvent(0)
     stopwatch = Stopwatch()
-    counter_size = Vector2(top_panel_button_size.x/5, top_panel_button_size.y)
-    speed_counter = CounterButton(counter_size, 2, CounterButton.Vertical)
-    speed_counter.add_button.outline_thickness = 1
-    speed_counter.sub_button.outline_thickness = 1
-    speed_counter.show_button.outline_thickness = 1
-    speed_counter.setMaximum(20)
-    speed_counter.setMinimum(1)
-    cb_pos = clear_button.position
-    cb_size = clear_button.size
-    speed_counter.setPosition(Vector2(cb_pos.x + cb_size.x + WIN_WIDTH/12, cb_pos.y))
-    field.setRules(json_settings["When-cells-will-alive"], json_settings["When-cells-still-live"])
+    last_clicked_cell = None
+
     while running:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -243,13 +244,11 @@ def main():
         top_panel.draw(screen)
         menu_button.draw(screen)
         next_step_button.draw(screen)
-        is_display_nc_button.draw(screen)
         auto_button.draw(screen)
         clear_button.draw(screen)
         speed_counter.draw(screen)
         display_neighbour_count.draw(screen)
         display_cell_outline.draw(screen)
-        cell_outline_button.draw(screen)
         ####
 
         if speed_counter.add_button.isClicked(mouse_event, mouse_position):
@@ -259,16 +258,16 @@ def main():
         if menu_button.isClicked(mouse_event, mouse_position):
             return
 
-        if cell_outline_button.isClicked(mouse_event, mouse_position):
+        if display_cell_outline.isClicked(mouse_event, mouse_position):
             onDisplayCellOutlineButtonPress()
 
         if auto_button.isClicked(mouse_event, mouse_position):
             onAutoButtonPress()
 
-        if is_display_nc_button.isClicked(mouse_event, mouse_position):
+        if display_neighbour_count.isClicked(mouse_event, mouse_position):
             onDiplayNCButtonPress()
 
-        if auto_button_is_active and stopwatch.time() // (1000/speed_counter.number) > 0:
+        if auto_button.isActive() and stopwatch.time() // (1000/speed_counter.number) > 0:
             stopwatch.reset()
             before_living_cells = []
             for cell_line in field.cells:
@@ -285,7 +284,7 @@ def main():
         if clear_button.isClicked(mouse_event, mouse_position):
             onClearButtonPress()
 
-        if not auto_button_is_active and next_step_button.isClicked(mouse_event, mouse_position):
+        if not auto_button.isActive() and next_step_button.isClicked(mouse_event, mouse_position):
             onNextButtonPress()
 
         for line_of_cells in field.cells:

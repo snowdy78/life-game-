@@ -12,7 +12,7 @@ class Cell:
         self.field = field
         self.rect.outline_thickness = 1
         self.rect.outline_color = pg.Color(0, 0, 0)
-        self.text = Text("0", WIN_HEIGHT/56)
+        self.text = Text("0", field.cell_size.y/1.8)
         self.alive()
         self.kill()
 

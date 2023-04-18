@@ -12,15 +12,7 @@ class Field:
         self.rules = [[3], [2, 3]]
         self.cell_size = Vector2((WIN_WIDTH)/size.x - self.indent.x, (WIN_HEIGHT )/size.y - self.indent.y)
         self.cells = [[Cell(self, (j, i)) for j in range(int(size.x))] for i in range(int(size.y))]
-        y = 0
-        for line_of_cells in self.cells:
-            x = 0
-            for cell in line_of_cells:
-                cell.outline = 1
-                cell.setPosition(Vector2((cell.rect.size.x + self.indent.x)*x,
-                                         (cell.rect.size.y + self.indent.y)*y))
-                x += 1
-            y += 1
+        self.setPosition(Vector2(0, 0))
 
     def setPosition(self, position: Vector2):
         self.position = position
@@ -55,7 +47,7 @@ class Field:
                 nc = cell.get_neighbour_count()
                 if nc in self.rules[0] and not cell.isLiving():
                     nflc.append(cell)
-                if not (nc in self.rules[1]) and cell.isLiving():
+                elif not (nc in self.rules[1]) and cell.isLiving():
                     nfdc.append(cell)
         for i in range(len(nflc)):
             nflc[i].alive()
