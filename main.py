@@ -32,7 +32,6 @@ def menu():
         nonlocal switcher_size, indent
         id = 0
         for i in buttons:
-            i.setString(str(id))
             i.setPosition(position + Vector2((switcher_size.x + indent) * id, 0))
             id += 1
 
@@ -52,7 +51,10 @@ def menu():
     for i in [slive_buttons_description, alive_buttons_description]:
         i.setColor(BLACK)
         i.setTextColor(WHITE)
-
+    for i in range(len(alive_buttons)):
+        alive_buttons[i].setString(str(i))
+    for i in range(len(still_live_buttons)):
+        still_live_buttons[i].setString(str(i))
     mouse_event = MouseButtonEvent(0)
     for i in json_settings["When-cells-will-alive"]:
         for j in range(len(alive_buttons)):
@@ -62,6 +64,17 @@ def menu():
         for j in range(len(still_live_buttons)):
             if i == j:
                 still_live_buttons[j].setActive(True)
+    counter_size = Vector2(switcher_size.x, switcher_size.y*2)
+
+    cell_count_width = CounterButton(counter_size, json_settings["cell-count"][0],
+                                     CounterButton.Vertical)
+    cell_count_height = CounterButton(counter_size, json_settings['cell-count'][1],
+                                      CounterButton.Vertical)
+    counter_pos_x = (WIN_WIDTH - counter_size.x)/2
+    setButtonsPosition(Vector2(counter_pos_x, WIN_HEIGHT/5), [cell_count_width, cell_count_height])
+    cell_count_width.setMinimum(1)
+    cell_count_height.setMinimum(1)
+
     while running:
         mouse_event.update()
         mouse_position = Vector2(pg.mouse.get_pos())
@@ -70,27 +83,33 @@ def menu():
                 running = False
                 break
         if pg.key.get_pressed()[pg.K_ESCAPE]:
+            json_settings["When-cells-still-live"] = [i for i in range(len(still_live_buttons))
+                                                      if still_live_buttons[i].isActive()]
+            json_settings["When-cells-will-alive"] = [i for i in range(len(alive_buttons))
+                                                      if alive_buttons[i].isActive()]
+            json_settings["cell-count"] = [cell_count_width.number, cell_count_height.number]
+            with open("settings.json", "w") as f:
+                f.write(json.dumps(json_settings))
             return
         screen.fill((0, 0, 0))
 
         for i in alive_buttons:
             if i.isClicked(mouse_event, mouse_position):
                 i.setActive(not i.isActive())
-                json_settings["When-cells-will-alive"] = [i for i in range(len(alive_buttons))
-                                                          if alive_buttons[i].isActive()]
-                with open("settings.json", "w") as f:
-                    f.write(json.dumps(json_settings))
         for i in still_live_buttons:
             if i.isClicked(mouse_event, mouse_position):
                 i.setActive(not i.isActive())
-                json_settings["When-cells-still-live"] = [i for i in range(len(still_live_buttons))
-                                                          if still_live_buttons[i].isActive()]
-                with open("settings.json", "w") as f:
-                    f.write(json.dumps(json_settings))
 
         for i, j in zip(alive_buttons, still_live_buttons):
             i.draw(screen)
             j.draw(screen)
+        for i in [cell_count_width, cell_count_height]:
+            if i.add_button.isClicked(mouse_event, mouse_position):
+                i.add()
+
+            if i.sub_button.isClicked(mouse_event, mouse_position):
+                i.sub()
+            i.draw(screen)
         alive_buttons_description.draw(screen)
         slive_buttons_description.draw(screen)
         pg.display.flip()
@@ -98,7 +117,7 @@ def menu():
 
 def main():
     global screen, running
-    field = Field(Vector2(48, 27))
+    field = Field(Vector2(json_settings["cell-count"][0], json_settings["cell-count"][1]))
     field_position = Vector2(WIN_WIDTH / 8, WIN_HEIGHT / 9)
     field.setPosition(field_position)
 
@@ -126,7 +145,7 @@ def main():
     display_neighbour_count = Text("Display neighbour count:", 18)
     display_neighbour_count.setPosition(Vector2(menu_button.position.x, field_position.y - field.cell_size.y / 9))
 
-    is_display_nc_button = Rect(Vector2(field.cell_size))
+    is_display_nc_button = Rect(Vector2(WIN_WIDTH/32, WIN_HEIGHT/20))
     is_display_nc_button.position = Vector2(menu_button.position.x +
                                             (menu_button.size.x - is_display_nc_button.size.x) / 2,
                                             menu_button.position.y + display_neighbour_count.position.y +
@@ -141,7 +160,7 @@ def main():
     display_cell_outline.setPosition(Vector2(menu_button.position.x,
                                              is_display_nc_button.position.y +
                                              is_display_nc_button.size.y + field.cell_size.y / 9))
-    cell_outline_button = Rect(Vector2(field.cell_size))
+    cell_outline_button = Rect(Vector2(WIN_WIDTH/32, WIN_HEIGHT/20))
     cell_outline_button.position = Vector2(is_display_nc_button.position.x,
                                            display_cell_outline.position.y + display_cell_outline.getSize().y)
     cell_outline_button.color = pg.Color(GREEN)

@@ -17,7 +17,8 @@ if not jsonfile_is_created:
     jsstr = json.dumps({
         'Window-size': (WIN_WIDTH, WIN_HEIGHT),
         'When-cells-will-alive': [3],
-        'When-cells-still-live': [2, 3]
+        'When-cells-still-live': [2, 3],
+        'cell-count': [48, 27]
     })
     with open("settings.json", 'w') as file:
         file.write(jsstr)

@@ -1,1 +1,1 @@
-{"Window-size": [2560, 1440], "When-cells-will-alive": [1, 8], "When-cells-still-live": [0, 1, 2, 4, 6, 8]}
+{"Window-size": [2560, 1440], "When-cells-will-alive": [3, 4, 5], "When-cells-still-live": [4, 5, 6], "cell-count": [64, 40]}

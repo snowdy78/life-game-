@@ -11,8 +11,8 @@ class CounterButton:
         pass
 
     def __init__(self, size: Vector2, show_number: int, align: type):
-        self.size = size
-        self.number = show_number
+        self.size = Vector2(size)
+        self.number = int(show_number)
         self.align = align
         if align is self.Vertical:
             self.add_button = RectWithText(Vector2(size.x, size.y/3), "+")
