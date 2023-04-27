@@ -5,6 +5,7 @@ from colors import *
 from math import floor
 
 root = Tk()
+# получение системного разрешение
 WIN_WIDTH = root.winfo_screenwidth()
 WIN_HEIGHT = root.winfo_screenheight()
 JSON_FILE_NAME = "settings.json"
