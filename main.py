@@ -81,7 +81,7 @@ def menu():
             with open("settings.json", "w") as f:
                 f.write(json.dumps(json_settings))
             return
-        screen.fill((0, 0, 0))
+        screen.fill(BLUE)
 
         for i in alive_buttons:
             if i.isClicked(mouse_event, mouse_position):
@@ -131,7 +131,7 @@ def main():
     menu_button.setPosition(Vector2(indent_between_buttons.x, next_step_button.position.y))
 
     display_neighbour_count = SwitcherButton(left_panel_button_size, "Display neighbour count:")
-    display_neighbour_count.text.setCharSize(24)
+    display_neighbour_count.text.setCharSize(int(34*display_neighbour_count.size.y/display_neighbour_count.size.x))
     display_neighbour_count.active_color = RED
     display_neighbour_count.default_color = left_panel.color
     display_neighbour_count.outline_thickness = 1
@@ -145,7 +145,7 @@ def main():
                                      auto_button.position.y))
 
     display_cell_outline = SwitcherButton(left_panel_button_size, "Display cell outline:")
-    display_cell_outline.text.setCharSize(24)
+    display_cell_outline.text.setCharSize(int(34*display_cell_outline.size.y/display_cell_outline.size.x))
     display_cell_outline.active_color = RED
     display_cell_outline.default_color = left_panel.color
     display_cell_outline.outline_thickness = 1
